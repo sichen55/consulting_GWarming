@@ -1,0 +1,505 @@
+---
+title: "Warming Model-Species & Soil"
+author: "Jinfei Xue, Janhao Yan, Si Chen"
+date: "Oct 27 2018"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+  word_document: default
+---
+
+```{r setup, echo = FALSE, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+# Introduction
+
+The green leaf dataset mainly includes the following variables:
+
+- Year: The year when sample collected
+- Month: The month when sample collected
+- Species: Tree species of leaf. ACRU = Acer rubrum (red maple); QURU = Quercus rubra (red oak)
+- Treatment: Experimental treatment (Heated or Control)
+- X.wt.Bsi: Percent biogenic silica in leaves by dry weight (0-100), indicating the silica level
+
+
+
+
+
+---------------------------------------------------------------------
+ Model 1 : Tree Species
+---------------------------------------------------------------------
+
+
+# Exploratory Data Analysis (EDA)
+
+In order to explore the relationship between the silica levels in leaves and some factors, including tree species(ACRU/QURU) and treatments(Heated/Control), and how the silica levels in tree leaves changed as time went by, we first make exploratory data analysis as followings.
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(lubridate)
+library(car)
+library(zoo)
+library(stringi)
+library(rlang)
+```
+
+```{r, echo = FALSE, warning = FALSE}
+# green_leaf_bsi dataset
+glbsi <- read.csv("green_leaf_bsi.csv")
+glbsi_avg <- glbsi %>% 
+  group_by(Year, Species, Treatment) %>%
+  summarise(avg = mean(X.wt.Bsi))
+
+glbsi_avg_ACRU = glbsi_avg %>% 
+  filter(Species == "ACRU")
+glbsi_avg_QURU = glbsi_avg %>% 
+  filter(Species == "QURU")
+
+glbsi_avg_control = glbsi_avg %>% 
+  filter(Treatment == "Control")
+glbsi_avg_heated = glbsi_avg %>% 
+  filter(Treatment == "Heated")
+```
+
+
+
+
+## 1.1 Compare silica levels under different treatments
+```{r, echo = FALSE}
+
+ggplot(data = glbsi_avg_ACRU) +
+  aes(x = Year, y = avg, color = Treatment) +
+  geom_point(size = 3) + 
+  labs(title = "Figure 1.1",
+       subtitle = "Silica Level in ACRU Tree Leaves",
+       x = "Year",
+       y = "Average Silica Level")+
+  theme(axis.text.x = element_text(size = 14))+
+  theme(axis.text.y = element_text(size = 14))+
+  geom_line()
+```
+
+
+```{r, echo = FALSE}
+ggplot(data = glbsi_avg_QURU) +
+  aes(x = Year, y = avg, color = Treatment) +
+  geom_point(size = 3) + 
+  labs(title = "Figure 1.2",
+       subtitle ="Silica Level in QURU Tree Leaves",
+       x = "Year",
+       y = "Average Silica Level")+
+  theme(axis.text.x = element_text(size = 14))+
+  theme(axis.text.y = element_text(size = 14))+
+  geom_line()
+```
+
+By comparing the two plots above, we can clearly see the silica levels in QURU tree leaves of heated group are higher than that in QURU tree leaves of control group.
+
+## Compare Silica levels in different tree species
+```{r, echo = FALSE}
+
+ggplot(data = glbsi_avg_control) +
+  aes(x = Year, y = avg, color = Species) +
+  geom_point(size = 3) + 
+  labs(title = "Figure 1.3",
+       subtitle ="Silica Level in Control Groups",
+       x = "Year",
+       y = "Average Silica Level")+
+  theme(axis.text.x = element_text(size = 14))+
+  theme(axis.text.y = element_text(size = 14))+
+  geom_line()
+```
+
+
+```{r, echo = FALSE}
+ggplot(data = glbsi_avg_heated) +
+  aes(x = Year, y = avg, color = Species) +
+  geom_point(size = 3) + 
+  labs(title = "Figure 1.4",
+       subtitle = "Silica Level in Heated Groups",
+       x = "Year",
+       y = "Average Silica Level")+
+  theme(axis.text.x = element_text(size = 14))+
+  theme(axis.text.y = element_text(size = 14))+
+  geom_line()
+```
+
+By comparing the two plots above, we can clearly see the silica levels in ACRU tree leaves are much higher than that in QURU tree leaves.
+
+
+
+
+# Modeling
+
+In the model, X.wt.Bsi is the dependent variable; Species, Treatment, Months and Month are selected as independent variables. 
+
+Months indicate the number of months from the time when the experiment started to the time when the samples were collected. We make log transformation for X.wt.Bsi and standardize Months.
+
+```{r, echo = FALSE}
+glbsi <- read.csv("green_leaf_bsi.csv", encoding = "UTF-8")
+
+glbsi$Year <- as.character(glbsi$Year)
+glbsi$Month <- as.character(glbsi$Month)
+glbsi$Date <- as.yearmon(paste0(glbsi$Year, "-0", glbsi$Month))
+glbsi$Months <- time_length(interval(as.yearmon("2002-05"),glbsi$Date), "month")
+glbsi$Months <- (glbsi$Months-mean(glbsi$Months))/sd(glbsi$Months)
+
+r_species <- lm(log(X.wt.Bsi) ~ factor(Species) + factor(Treatment) + Months + factor(Month)+factor(Species)*Months, data = glbsi)
+summary(r_species)
+```
+
+From the regression result, we can see that:
+
+1) R-squared is 0.9845(near 1), which means that 98.45% variations in dependent variable can be explained by independent variables in the model, indicating that our regression model fits the data very well.
+
+2) p-value of F-statistic is very small, indicating that all of independent variables in the model can together explain the data very well.
+
+3) Most of coefficients are statistically significant, indicating that each independent variable can explain the data very well.
+
+Now, we look at the marginal model plots and residual plots to check the fitted model
+
+
+
+```{r, echo = FALSE}
+round(r_species$coefficients,digits = 2)
+```
+
+So the regression model is:
+
+$log(X.wt.Bsi)=0.11-1.17\times QURU+0.07 \times Heated -0.04\times Months-0.05 \times Month_{7}+0.24 \times Month_{8}+0.07 \times QURU \times Months$
+
+
+
+
+------------------------------------------------------------
+Model 2 : Soil Layers
+-----------------------------------------------------------
+
+
+
+
+# Introduction
+
+The soil dataset mainly includes the following variables:
+
+- Date: The date when sample collected
+- Layer: Layer of soil core (organic or mineral)
+- Treatment: Experimental treatment (Heated or Control)
+- X.wt.Bsi: Percent biogenic silica in leaves by dry weight (0-100), indicating the silica level
+
+# Exploratory Data Analysis (EDA)
+
+In order to explore the relationship between the silica levels in soil and some factors, including the layer of soil core (organic/mineral) and treatments(Heated/Control), and how the silica levels in soil changed as time went by, we first make exploratory data analysis as followings.
+
+
+```{r, echo = FALSE}
+# soil_bsi dataset
+soil_bsi <- read.csv("soil_bsi.csv")
+
+soil_avg <- soil_bsi %>% 
+  group_by(Date, Layer, Treatment) %>%
+  summarise(avg = mean(X.wt.Bsi)) 
+
+soil_avg <- soil_avg[-1,]
+soil_avg$Date <- strptime(soil_avg$Date, "%m/%d/%y")
+soil_avg$Date <- as.Date(soil_avg$Date)
+soil_avg <- arrange(soil_avg,Date)
+
+SM = soil_avg %>% 
+  filter(Layer == "Mineral")
+SM2 = soil_avg %>% 
+  filter(Layer == "Organic")
+```
+
+## Compare silica levels under different treatments
+```{r, echo = FALSE}
+par(mfrow=c(2,1))
+
+ggplot(data = SM) +
+  aes(x = Date, y = avg, color = Treatment) +
+  geom_point(size = 3) + 
+  labs(title = "Figure 2.1",
+       subtitle ="Silica Level in Soil Mineral Level",
+       x = "Date",
+       y = "Average Silica Level")+
+  theme(axis.text.x = element_text(size = 14))+
+  theme(axis.text.y = element_text(size = 14))+
+  geom_line()
+
+
+ggplot(data = SM2) +
+  aes(x = Date, y = avg, color = Treatment) +
+  geom_point(size = 3) + 
+  labs(title = "Figure 2.2",
+       subtitle ="Silica Level in Soil Organic Level",
+       x = "Date",
+       y = "Average Silica Level")+
+  theme(axis.text.x = element_text(size = 14))+
+  theme(axis.text.y = element_text(size = 14))+
+  geom_line()
+```
+
+By comparing the two plots above, we can clearly see almost all silica levels in control group(except one point) are higher than that in heated group.
+
+
+
+
+
+
+# Modeling
+
+
+In the model, X.wt.Bsi(Silicalevel) is the dependent variable; Layer, Treatment, deployedtime and season are selected as independent variables. 
+
+"deployedtime" indicates the number of days from the time when the experiment started(2002/05/07) to the time when the samples were collected. "season" indicates the month of the date when the samples were collected.
+
+```{r, echo = FALSE}
+soil_bsi <- read.csv("soil_bsi.csv")
+
+soil_bsi$Date<-mdy(soil_bsi$Date)
+soil_data<-na.omit(soil_bsi[,c("Date","Layer","Treatment","X.wt.Bsi")])
+soil_data<-soil_data
+standaeddate<-c(ymd(020507))
+soil_data1<-soil_data %>%
+  mutate(deployedtime=difftime(Date,standaeddate,units = "days"))
+soil_data1$deployedtime<-as.numeric(soil_data1$deployedtime)
+colnames(soil_data1)[4]<-"Silicalevel"
+soil_data1$Layer<-factor(soil_data1$Layer)
+soil_data1$Treatment<-factor(soil_data1$Treatment)
+soil_data2<-soil_data1%>%
+  mutate(season=month(Date))
+
+soil_model<-lm(Silicalevel~factor(Layer)+factor(Treatment)+deployedtime+factor(season),data = soil_data2)
+summary(soil_model)
+```
+
+From the regression result, we can see that:
+
+1) p-value of F-statistic is smaller than 0.05, indicating that all of independent variables in the model can together explain the data well.
+
+2) Most of coefficients are statistically significant, indicating that each independent variable can explain the data well.
+
+
+
+
+```{r, echo = FALSE}
+round(soil_model$coefficients,digits = 6)
+```
+
+So the regression model is:
+
+$X.wt.Bsi=1.090276+0.140582\times Organic+0.113948 \times Heated -0.000040\times deployedtime-0.045594 \times season_{6}$
+
+
+
+
+
+
+
+-----------------------------------------------
+Model 3: Silica Level VS Decaying Rate
+-----------------------------------------------
+
+
+
+# Introduction
+This dataset mainly includes these variables
+-Species: The species of the leaves that we collected
+-Treantment: Heated group and Controlled group
+-Time.Deployed: The length of time from the deployed date to collected date
+-Mass.Loss: The weight of the leaves caused by decomposition
+-X.wt.Bsi: The silica level in leaves
+
+
+# Exploratory Data Analysis (EDA)
+
+In order to explore the relationship between the silica levels in leaves and decaying rate under different species and treatments, we draw two plots.
+```{r, echo = FALSE}
+litterbags <- read.csv("litterbags.csv")
+datalb <- litterbags[12:162, ]
+datalb$Date.Collected <- as.Date(strptime(datalb$Date.Collected, "%m/%d/%y"))
+datalb$Date.Deployed <- as.Date(strptime(datalb$Date.Deployed, "%m/%d/%y"))
+datalb$Mass.Loss <- as.numeric(datalb$Mass.Loss)
+```
+
+
+
+
+```{r, echo = FALSE}
+datalb_heated<-datalb%>%
+  filter(Treatment=="Warming")%>%
+  group_by(Species,Date.Collected)%>%
+  summarise(mean=mean(X.wt.Bsi),Mass.Loss=mean(Mass.Loss))
+ggplot(data = datalb_heated) +
+  aes(x = Date.Collected, y = mean, color = Species) +
+  geom_point(size = datalb_heated$Mass.Loss)+
+  geom_line() +
+  labs(title = "Figure 3.1",
+       subtitle = "Heated group vs Decaying Rate",
+       caption = "Point size = Decaying Rate",
+    y = 'Average silica level') +
+  theme_minimal()
+```
+
+
+
+
+
+
+
+
+
+
+```{r, echo = FALSE}
+datalb_normal<-datalb%>%
+  filter(Treatment=="Control")%>%
+  group_by(Species,Date.Collected)%>%
+  summarise(mean=mean(X.wt.Bsi),Mass.Loss=mean(Mass.Loss))
+ggplot(data = datalb_normal) +
+  aes(x = Date.Collected, y = mean, color = Species) +
+  geom_point(size = datalb_normal$Mass.Loss)+
+  geom_line() +
+  labs(title = "Figure 3.2",
+         subtitle = "Controlled group vs Decaying Rate",
+       caption = "Point size = Decaying Rate",
+       y = 'Average silica level') +
+  theme_minimal()
+
+```
+
+
+
+
+By comparingh these two plots ,we can find that the heated treatment can cause faster decaying rate than the controlled group. What's more, we should notice that the decaying rate increases with the time increases. But we should also notice that it seems like that silica level may not have such a strong relationship with decaying rate. And it is obvious that the silica level in TSCA is the lowest both in heated and controlled group.
+
+
+# Modelling
+
+In this section, our group want to figure out what is the relationship between silica level in leaves and decaying rate. We draw the two plots. And we fit the linear regression model. In this model, we do z-scores to the silica level and log transformation. 
+The reponsive variable is silica level, and independent variables are deploy time, mass.loss, tree species and treatment.
+```{r, echo = FALSE}
+
+datalb$Time.Deployed<-as.numeric(datalb$Time.Deployed)
+datalb1<-datalb%>%
+  mutate(stdecaying=scale(Mass.Loss,center = TRUE,scale = TRUE),
+         stBsi=scale(X.wt.Bsi,center = TRUE,scale = TRUE))
+model_litterbags<-lm(data = datalb1,
+                     X.wt.Bsi~factor(Species)+factor(Treatment)+
+                       Time.Deployed+Mass.Loss)
+summary(model_litterbags)
+```
+The overview of this model gives us a good first impression. The p-value is small and r squared is near to 1. What's more, the coeficients of intercept, QURU and TSCA are significant.
+And we combine our model with our plots. From the plots, we can find with the deployed time increasing, the decaying rate tends to increase too. From the model, the coeeficient of Time.deployed is 0.0011800 which is positve, and this correspond what we find in our plots.
+
+
+
+
+
+
+
+
+#                             Appendix
+
+##Model 1
+## Marginal Model Plots
+```{r, echo = FALSE, warning = FALSE}
+marginalModelPlots(r_species)
+title(main = "Figure 1.5")
+```
+
+From the marginal model plots above, we can see the red dash line for the model almost cover the blue line for data, indicating that the model fit the data well.
+
+
+
+
+## Residual Plots
+```{r, echo = FALSE}
+rf_species <- fortify(r_species)
+
+# residual plot for species
+ggplot(rf_species, aes(x = .fitted, y = .resid, colour = rf_species$`factor(Species)`)) + 
+  geom_point()+
+  scale_colour_manual(name = "Species", limits = c("ACRU","QURU"), values = c("red", "green2"))+
+  stat_smooth(method="loess", col = "black")+geom_hline(yintercept=0, col="black", linetype="dashed")+
+  labs(title = "Figure 1.6",
+       subtitle = "Residual for Species vs Fitted Plot",
+       x = "Fitted values",
+       y = "Residuals")+
+  theme(axis.text.x = element_text(size = 14))+
+  theme(axis.text.y = element_text(size = 14))+
+  theme_bw()
+```
+
+
+```{r, echo = FALSE}
+# residual plot for treatment
+ggplot(rf_species, aes(x = .fitted, y = .resid, colour = rf_species$`factor(Treatment)`))+ 
+  geom_point()+
+  scale_colour_manual(name = "Treatment", limits = c("Heated","Control"), values = c("red", "green2"))+
+  stat_smooth(method="loess", col = "black")+geom_hline(yintercept=0, col="black", linetype="dashed")+
+  labs(title = "Figure 1.7",
+       subtitle = "Residual for Treatment vs Fitted Plot",
+       x = "Fitted values",
+       y = "Residuals")+
+  theme(axis.text.x = element_text(size = 14))+
+  theme(axis.text.y = element_text(size = 14))+
+  theme_bw()
+
+```
+
+
+```{r, echo = FALSE}
+       
+# residual plot for month
+ggplot(rf_species, aes(x = .fitted, y = .resid, colour=rf_species$`factor(Month)`)) + 
+  geom_point()+
+  scale_colour_manual(name = "Month", limits = c(6, 7, 8), values = c("red", "green2", "blue"))+
+  stat_smooth(method="loess", col = "black")+
+  geom_hline(yintercept=0, col="black", linetype="dashed")+
+  labs(title = "Figure 1.8",
+       subtitle = "Residual for Month vs Fitted Plot",
+       x = "Fitted values",
+       y = "Residuals")+
+  theme(axis.text.x = element_text(size = 14))+
+  theme(axis.text.y = element_text(size = 14))+
+  theme_bw()
+```
+## summarise
+From the residual plots above, we can conclude that the model fits the data well.
+
+
+
+##Model 2
+Then we look at the residual plot to check the fitted model
+
+## Residual Plots
+```{r, echo = FALSE}
+plot(soil_model,color=soil_model$Layer,which = 1)
+title(main = "Figure 2.3")
+```
+
+
+##Model 3
+## residual plot
+```{r, echo = FALSE}
+plot(model_litterbags,which = 1)
+title(main = "Figure 3.3")
+```
+we can find that the residual is not that bad.
+
+## marginal model plots
+```{r, echo = FALSE,warning = FALSE}
+
+marginalModelPlots(model_litterbags)
+
+title(main = "Figure 3.4")
+```
+we can find marginal model plots is good.
+
+## summarise
+This model can do a great job to describe our data.

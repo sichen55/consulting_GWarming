@@ -1,0 +1,8 @@
+﻿Column,Column Number,Variable Name,Variable Description
+A,1,Sample Type,"Category of sample (green leaf, soil, leaf litter, litter bag)"
+B,2,Year,Year sample collected
+C,4,Species,Tree species of leaf. ACRU=Acer rubrum (red maple); QURU=Quercus rubra (red oak)
+D,5,Treatment,Experimental treatment (Heated or Control)
+E,6,Litter Basket,Basket in which litter was collected. Basket numbers not recorded in 2008.
+F,7,Lab ID,Unique ID for each sample analyzed in lab.
+G,8,%wt Bsi,Percent biogenic silica by dry weight (0-100)
