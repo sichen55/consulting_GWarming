@@ -1,6 +1,6 @@
 ---
 title: "Warming Model-Species & Soil"
-author: "Jinfei Xue, Janhao Yan, Si Chen"
+author: "Jinfei Xue, Jianhao Yan, Si Chen"
 date: "Oct 27 2018"
 output:
   pdf_document: default
