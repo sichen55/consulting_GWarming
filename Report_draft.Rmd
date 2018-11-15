@@ -31,7 +31,7 @@ There are three seperate datasets corresponding to the three relationship. There
 
 ## 2.1 Dataset Introduction
 
-The green leaf dataset mainly has variables including Year(the year when sample collected), month(the month when sample collected), species(tree species of leaf, ACRU = Acer rubrum (red maple); QURU = Quercus rubra (red oak)), treatment(experimental treatment: Heated or Control) and X.wt.Bsi(percent biogenic silica in leaves by dry weight (0-100), indicating the silica level)
+The green leaf dataset mainly has variables including Year(the year when sample collected), month(the month when sample collected), species(tree species of leaf, ACRU = Acer rubrum (red maple), QURU = Quercus rubra (red oak)), treatment(experimental treatment: Heated or Control) and X.wt.Bsi(percent biogenic silica in leaves by dry weight (0-100), indicating the silica level)
 
 ## 2.2 Exploratory Data Analysis (EDA)
 
@@ -66,9 +66,8 @@ glbsi_avg_heated = glbsi_avg %>%
 ```
 
 
-## 1.1 Compare silica levels under different treatments
+### Figure 1.1 & 1.2: Compare silica levels in leaves under different treatments
 ```{r, echo = FALSE}
-
 ggplot(data = glbsi_avg_ACRU) +
   aes(x = Year, y = avg, color = Treatment) +
   geom_point(size = 3) + 
@@ -80,7 +79,6 @@ ggplot(data = glbsi_avg_ACRU) +
   theme(axis.text.y = element_text(size = 14))+
   geom_line()
 ```
-
 
 ```{r, echo = FALSE}
 ggplot(data = glbsi_avg_QURU) +
@@ -97,7 +95,7 @@ ggplot(data = glbsi_avg_QURU) +
 
 By comparing the two plots above, we can clearly see the silica levels in QURU tree leaves of heated group are higher than that in QURU tree leaves of control group.
 
-## Compare Silica levels in different tree species
+### Figure 1.3 & 1.4: Compare Silica levels in different tree species
 ```{r, echo = FALSE}
 
 ggplot(data = glbsi_avg_control) +
@@ -111,7 +109,6 @@ ggplot(data = glbsi_avg_control) +
   theme(axis.text.y = element_text(size = 14))+
   geom_line()
 ```
-
 
 ```{r, echo = FALSE}
 ggplot(data = glbsi_avg_heated) +
@@ -128,14 +125,11 @@ ggplot(data = glbsi_avg_heated) +
 
 By comparing the two plots above, we can clearly see the silica levels in ACRU tree leaves are much higher than that in QURU tree leaves.
 
+# 2.3 Modeling
 
+In the model, X.wt.Bsi is the dependent variable; Species, Treatment, Months and Month are selected as independent variables. Months indicates the number of months from the time when the experiment started to the time when the samples were collected. Month indicates the month when the samples were selected.
 
-
-# Modeling
-
-In the model, X.wt.Bsi is the dependent variable; Species, Treatment, Months and Month are selected as independent variables. 
-
-Months indicate the number of months from the time when the experiment started to the time when the samples were collected. We make log transformation for X.wt.Bsi and standardize Months.
+In order to make the model fit the data better, we make log transformation for X.wt.Bsi. From the previous EDA, we can find out that the effect of different species on silica level depends on the value of Months. That is to say, the two variables(Species and Months) might interact with each other. Therefore, we add the interaction term for these two variables in the model.
 
 ```{r, echo = FALSE}
 glbsi <- read.csv("green_leaf_bsi.csv", encoding = "UTF-8")
@@ -144,33 +138,41 @@ glbsi$Year <- as.character(glbsi$Year)
 glbsi$Month <- as.character(glbsi$Month)
 glbsi$Date <- as.yearmon(paste0(glbsi$Year, "-0", glbsi$Month))
 glbsi$Months <- time_length(interval(as.yearmon("2002-05"),glbsi$Date), "month")
-glbsi$Months <- (glbsi$Months-mean(glbsi$Months))/sd(glbsi$Months)
 
 r_species <- lm(log(X.wt.Bsi) ~ factor(Species) + factor(Treatment) + Months + factor(Month)+factor(Species)*Months, data = glbsi)
+```
+
+## 2.4 Discussions
+
+```{r}
 summary(r_species)
 ```
 
-From the regression result, we can see that:
+From the regression result, we can see that R-squared is 0.9845(near 1), which means that 98.45% of the variations in dependent variable can be explained by independent variables in the model. 
 
-1) R-squared is 0.9845(near 1), which means that 98.45% variations in dependent variable can be explained by independent variables in the model, indicating that our regression model fits the data very well.
+Besides, p-value of F-statistic is very small, indicating that the linear regression model provides a better fit to the data than a model that contains no independent variables. 
 
-2) p-value of F-statistic is very small, indicating that all of independent variables in the model can together explain the data very well.
+The p-value for each independent variable tests the null hypothesis that the variable has no correlation with the dependent variable. In the regression result, p-values of most of coefficients in the model are smaller than the usual significance level of 0.05, so we should reject the null hypothesis, which means those coefficients are statistically significant and we should not remove them. 
 
-3) Most of coefficients are statistically significant, indicating that each independent variable can explain the data very well.
+The coefficient of "factor(Species)QURU" is negative, indicating that with the same level of the other variables, the silica level in QURU tree leaves is lower than that in ACRU tree leaves. This result is consistent with the comparison between figure 1.3 and 1.4. The coefficient of "factor(Treatment)Heated" is positive, indicating that with the same level of the other variables, the silica level under heated treatment is lower than that under control treatment. This result is consistent with the comparison between figure 1.1 and 1.2. The coefficient of "Months" is negative, indicating that with the same level of the other variables, the silica level in tree leaves decreased as time went by. This result is also consistent with the overall trends in figures in part 2.2. 
 
-Now, we look at the marginal model plots and residual plots to check the fitted model
-
-
+In order to check the fitted model, we make the marginal model plots and residual plots in the appendix, which shows the model fit the data well.
 
 ```{r, echo = FALSE}
-round(r_species$coefficients,digits = 2)
+round(r_species$coefficients,digits = 6)
 ```
 
-So the regression model is:
+So the linear regression model is:
 
-$log(X.wt.Bsi)=0.11-1.17\times QURU+0.07 \times Heated -0.04\times Months-0.05 \times Month_{7}+0.24 \times Month_{8}+0.07 \times QURU \times Months$
+$log(X.wt.Bsi)=0.179747-1.292069\times QURU+0.067593 \times Heated -0.000713\times Months-0.052270 \times Month_{7}+0.243141 \times Month_{8}+0.001259 \times QURU \times Months$
 
+"QURU" equals to 1 when samples are from QURU tree leaves; "QURU" equals to 0 when samples are from ACRU tree leaves. 
 
+"Heated" equals to 1 when samples are from heated group; "Heated" equals to 0 when samples are from control group. 
+
+If samples are collected in June, then "factor(Month)7" and "factor(Month)8" are both equal to 0; If samples are collected in July, then "factor(Month)7" equal to 1 but "factor(Month)8" equals to 0; If samples are collected in August, then "factor(Month)8" equal to 1 but "factor(Month)7" equals to 0.
+
+"$QURU\times Months$" equals to the value of "Months" when samples are from QURU tree leaves(because "QURU" equals to 1 in this case). However, "$QURU\times Months$" equals to 0 when samples are from ACRU tree leaves(because "QURU" equals to 0 in this case).
 
 
 ------------------------------------------------------------
@@ -390,8 +392,8 @@ model_litterbags<-lm(data = datalb1,
                        Time.Deployed+Mass.Loss)
 summary(model_litterbags)
 ```
-The overview of this model gives us a good first impression. The p-value is small and r squared is near to 1. What's more, the coeficients of intercept, QURU and TSCA are significant.
-And we combine our model with our plots. From the plots, we can find with the deployed time increasing, the decaying rate tends to increase too. From the model, the coeeficient of Time.deployed is 0.0011800 which is positve, and this correspond what we find in our plots.
+The overview of this model gives us a good first impression. The p-value is small and r squared is near to 1. What's more, the coefficients of intercept, QURU and TSCA are significant.
+And we combine our model with our plots. From the plots, we can find with the deployed time increasing, the decaying rate tends to increase too. From the model, the coefficient of Time.deployed is 0.0011800 which is positve, and this correspond what we find in our plots.
 
 
 
@@ -409,9 +411,9 @@ marginalModelPlots(r_species)
 title(main = "Figure 1.5")
 ```
 
-From the marginal model plots above, we can see the red dash line for the model almost cover the blue line for data, indicating that the model fit the data well.
+Marginal model plots for tree species data shows the dependent variable (log(X.wt.Bsi)) on the vertical axes and the horizontal axes denotes numeric independent values (plotted points) in the fitted linear regression model. Margin model plots provide a graphical representation of model fit by showing the marginal relationships between the dependent variable and independent variables. We fitted a regression function for each of the plots using a lowess smooth function for the data (solid blue line) and for the fitted values (dashed red line). 
 
-
+From the marginal model plots above, we can see the red dash line for the fitted values almost covers the blue line for data, indicating that the model fit the data well.
 
 
 ## Residual Plots
@@ -467,8 +469,10 @@ ggplot(rf_species, aes(x = .fitted, y = .resid, colour=rf_species$`factor(Month)
   theme_bw()
 ```
 ## summarise
-From the residual plots above, we can conclude that the model fits the data well.
 
+The difference between the observed value of the dependent variable and the fitted value is called the residual. A residual plot is a graph that shows the residuals on the vertical axis and the independent variable on the horizontal axis. One of assumptions for residuals in linear regression model is that the mean of residuals is zero. Therefore, if the points in a residual plot are randomly dispersed around the horizontal line at zero(the dashed black line), the linear regression model is appropriate for the data; otherwise, a non-linear model is more appropriate.
+
+From the residual plots above, we can see that the points are dispersed randomly around the horizontal line at zero. Therefore, we can conclude that the linear model for tree species fits the data well.
 
 
 ##Model 2
