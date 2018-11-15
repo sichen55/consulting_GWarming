@@ -13,28 +13,27 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# 1 Introduction
 
+## 1.1 Overview
 
-# Introduction
+Global warming has become a significant topic in the ecosystem field. It’s worthwhile to study in the effects which global warming has brought about. Therefore, a long-term ecosystem warming experiment was established at Harvard Forest (Petersham, MA) in 2002. In this experiment, two 30 x 30 meter plots were established in 2002. One plot is continuously heated to 5 degrees Celsius above ambient temperature, while the other plot is left as a control. A wide variety of ecological response variables have been measured over the course of the experiment. The data were collected from 2002 to 2016 in different time intervals.
 
-The green leaf dataset mainly includes the following variables:
+In this study, silica (silicon dioxide; SiO2) concentration was measured in the two ecosystem pools. Measurements can be divided into two broad categories including single-time point measurements of silica pools, specifically, green leaves, leaf litter, and soil, and measurement of silica loss from decaying leaves over time, using a litterbag experiment.
 
-- Year: The year when sample collected
-- Month: The month when sample collected
-- Species: Tree species of leaf. ACRU = Acer rubrum (red maple); QURU = Quercus rubra (red oak)
-- Treatment: Experimental treatment (Heated or Control)
-- X.wt.Bsi: Percent biogenic silica in leaves by dry weight (0-100), indicating the silica level
+Our Client is interested in finding the relationship between temparature and the silica level in different tree species and soil types, and the relationship between temparature and decomposition rate given the factors including tree species, temperature and time.
 
+## 1.2 Outline
 
+There are three seperate datasets corresponding to the three relationship. Therefore, we consider each relationship seperately. For each one, we first conduct exploratory data analysis to explore the relationship among variables in each dataset. Next, we make models to fit each corresponding dataset. Lastly, we interpret our model and discuss conclusions.
 
+# 2 Model1 : Tree Species
 
+## 2.1 Dataset Introduction
 
----------------------------------------------------------------------
- Model 1 : Tree Species
----------------------------------------------------------------------
+The green leaf dataset mainly has variables including Year(the year when sample collected), month(the month when sample collected), species(tree species of leaf, ACRU = Acer rubrum (red maple); QURU = Quercus rubra (red oak)), treatment(experimental treatment: Heated or Control) and X.wt.Bsi(percent biogenic silica in leaves by dry weight (0-100), indicating the silica level)
 
-
-# Exploratory Data Analysis (EDA)
+## 2.2 Exploratory Data Analysis (EDA)
 
 In order to explore the relationship between the silica levels in leaves and some factors, including tree species(ACRU/QURU) and treatments(Heated/Control), and how the silica levels in tree leaves changed as time went by, we first make exploratory data analysis as followings.
 
@@ -65,8 +64,6 @@ glbsi_avg_control = glbsi_avg %>%
 glbsi_avg_heated = glbsi_avg %>% 
   filter(Treatment == "Heated")
 ```
-
-
 
 
 ## 1.1 Compare silica levels under different treatments
