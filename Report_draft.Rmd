@@ -180,8 +180,6 @@ Model 2 : Soil Layers
 -----------------------------------------------------------
 
 
-
-
 # Introduction
 
 The soil dataset mainly includes the following variables:
@@ -243,14 +241,12 @@ ggplot(data = SM2) +
   geom_line()
 ```
 
-By comparing the two plots above, we can clearly see almost all silica levels in control group(except one point) are higher than that in heated group.
 
 
 
 
 
-
-# Modeling
+# 2.3 Modeling
 
 
 In the model, X.wt.Bsi(Silicalevel) is the dependent variable; Layer, Treatment, deployedtime and season are selected as independent variables. 
@@ -274,15 +270,25 @@ soil_data2<-soil_data1%>%
   mutate(season=month(Date))
 
 soil_model<-lm(Silicalevel~factor(Layer)+factor(Treatment)+deployedtime+factor(season),data = soil_data2)
+
+```
+##2.4 Discussion
+
+```{r}
 summary(soil_model)
 ```
 
-From the regression result, we can see that:
 
-1) p-value of F-statistic is smaller than 0.05, indicating that all of independent variables in the model can together explain the data well.
 
-2) Most of coefficients are statistically significant, indicating that each independent variable can explain the data well.
+From the regression result, we can see that R-squared is 0.162, which means that 16.2% of the variations in dependent variable can be explained by independent variables in the model. 
 
+Besides, p-value of F-statistic is very small, indicating that the linear regression model provides a better fit to the data than a model that contains no independent variables. 
+
+The p-value for each independent variable tests the null hypothesis that the variable has no correlation with the dependent variable. In the regression result, p-values of most of coefficients in the model are smaller than the usual significance level of 0.05, so we should reject the null hypothesis, which means those coefficients are statistically significant and we should not remove them. 
+
+The intercept means that when the mineral layer in May and in controlled group with 0 deployed tike, the silica level is 1.09e. The coefficient of Layer Organic is positive, so it tells us that, with other variables stay the same, the silica level in organic level is higher than mineral level. When we look at the coefficient of treatment, we can know that the the silica level in heated group is higher than controlled group with other variables staying the same. And we can justify our conclusion by figure 2.1&figure 2.2. We can find that the green line(heated) is on the top of red line(controlled). From the model, we can know that the deployed time has negative effects on the silical level with other variables staying the same, which is consistent with the figure 2.1&2.2. What's more, it seems like that silical level in May is higher than the silical level in June with other variables staying the same.
+
+In order to check the fitted model, we make the marginal model plots and residual plots in the appendix, which shows the model fit the data well.
 
 
 
@@ -290,13 +296,9 @@ From the regression result, we can see that:
 round(soil_model$coefficients,digits = 6)
 ```
 
-So the regression model is:
 
-$X.wt.Bsi=1.090276+0.140582\times Organic+0.113948 \times Heated -0.000040\times deployedtime-0.045594 \times season_{6}$
-
-
-
-
+The regression model is 
+$silical level=1.09+0.14 /times Layer+0.1139/times treatment-0.000040/times deployedtime-0.045594/times season$
 
 
 
@@ -374,10 +376,10 @@ ggplot(data = datalb_normal) +
 
 
 
-By comparingh these two plots ,we can find that the heated treatment can cause faster decaying rate than the controlled group. What's more, we should notice that the decaying rate increases with the time increases. But we should also notice that it seems like that silica level may not have such a strong relationship with decaying rate. And it is obvious that the silica level in TSCA is the lowest both in heated and controlled group.
+By comparingh these two plots ,we can find that the heated treatment can cause faster decaying rate than the controlled group. What's more, we should notice that the decaying rate increases with the time increases. But we should also notice that it seems like that silica level may not have such a strong relationship with decaying rate. And it is obvious that the silica level in TSCA is the lowest both in heated and controlled group.12
 
 
-# Modelling
+#2.3 Modelling
 
 In this section, our group want to figure out what is the relationship between silica level in leaves and decaying rate. We draw the two plots. And we fit the linear regression model. In this model, we do z-scores to the silica level and log transformation. 
 The reponsive variable is silica level, and independent variables are deploy time, mass.loss, tree species and treatment.
@@ -392,11 +394,26 @@ model_litterbags<-lm(data = datalb1,
                        Time.Deployed+Mass.Loss)
 summary(model_litterbags)
 ```
-The overview of this model gives us a good first impression. The p-value is small and r squared is near to 1. What's more, the coefficients of intercept, QURU and TSCA are significant.
-And we combine our model with our plots. From the plots, we can find with the deployed time increasing, the decaying rate tends to increase too. From the model, the coefficient of Time.deployed is 0.0011800 which is positve, and this correspond what we find in our plots.
+
+##2.4 Discussion
 
 
+From the regression result, we can see that R-squared is 0.8228, which means that 82銆?28% of the variations in dependent variable can be explained by independent variables in the model. 
 
+Besides, p-value of F-statistic is very small, indicating that the linear regression model provides a better fit to the data than a model that contains no independent variables. 
+
+The p-value for each independent variable tests the null hypothesis that the variable has no correlation with the dependent variable. In the regression result, p-values of most of coefficients in the model are smaller than the usual significance level of 0.05, so we should reject the null hypothesis, which means those coefficients are statistically significant and we should not remove them. 
+
+The intercept means that, the speciese of ACRU in controlled group that have 0 deployed time and mass loss will have2.2393 silical level. The coefficent of species gives us the information that sillical level differes from species. The BESP has the highest silical level compared with other species with other variables staying the same.And this is consistent with our figure that the line of BESP is on the top of other lines no matter what treatment is. The coefficient of treatment tells us that, with other variables staying the same, the silical level in heated grouop may be lower than controlled group. What's more, the deployed time can have positive effects on the silical level with other variables staying the same which we can find from the EDA that, with time increasing, the silical level tends ti increase. Finally, the Mass.Loss of litter leaves may cause the increase of the silical level in leaves with other variables staying the same. 
+
+In order to check the fitted model, we make the marginal model plots and residual plots in the appendix, which shows the model fit the data well.
+
+```{r, echo = FALSE}
+round(model_litterbags$coefficients,digits = 6)
+```
+
+The model is 
+$silical level= 2.23926+0.2361*BESP-1.57*QURU-2.09*TSCA-0.08*warming+0.00118*Time.Deployed+0.0212*Mass.Lpss$
 
 
 
@@ -483,7 +500,9 @@ Then we look at the residual plot to check the fitted model
 plot(soil_model,color=soil_model$Layer,which = 1)
 title(main = "Figure 2.3")
 ```
+##summarise
 
+From the residual model, we can find that the dots are evenly distributed around both sides of x=0. And the red line is almost near the x=0 without too many fluctuations. So we can say the model fits well.
 
 ##Model 3
 ## residual plot
@@ -491,7 +510,7 @@ title(main = "Figure 2.3")
 plot(model_litterbags,which = 1)
 title(main = "Figure 3.3")
 ```
-we can find that the residual is not that bad.
+
 
 ## marginal model plots
 ```{r, echo = FALSE,warning = FALSE}
@@ -500,7 +519,11 @@ marginalModelPlots(model_litterbags)
 
 title(main = "Figure 3.4")
 ```
-we can find marginal model plots is good.
+
 
 ## summarise
 This model can do a great job to describe our data.
+
+Reason 1: The residual plot fits well. The dots evenly distributed, and the red line is almost the same with x=0.
+
+Reason 2: The marginal model plots tell us that the model fits good.
