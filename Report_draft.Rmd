@@ -64,7 +64,10 @@ glbsi_avg_heated = glbsi_avg %>%
 ```
 
 
-### Figure 2.1 & 2.2: Compare silica levels in leaves under different treatments
+## Figure 2.1 & 2.2: Compare silica levels in leaves under different treatments
+
+
+
 ```{r}
 ggplot(data = glbsi_avg_ACRU) +
   aes(x = Year, y = avg, color = Treatment) +
@@ -77,6 +80,8 @@ ggplot(data = glbsi_avg_ACRU) +
   theme(axis.text.y = element_text(size = 14))+
   geom_line()
 ```
+
+
 ### 2.2.1 Silica Level in ACRU Tree Leaves
 
 In figure 2.1, we set Average Silica Level as response variable and compare the difference between control group and heated group in ACRU(Red Maple) tree leaves. Adding lines connecting the points, we can see more clearly that heat brings a positive effect on silica level in ACRU tree leaves since the heated group line is mostly above the control group line. This follows our expectation if we supposed to see heat having positive effects. In 2016, there is an exception that heated group has lower average silica level than control group.  There might be unexpected variables interupted the trend such as special weather. It may be explained by tracing back to data from 2016 and other related information. Overall, we can also see a decreasing trend overtime for both groups, which may be intuitive since as time goes, the concentration of silica will decrease.  
@@ -94,15 +99,20 @@ ggplot(data = glbsi_avg_QURU) +
   theme(axis.text.y = element_text(size = 14))+
   geom_line()
 ```
+
+
 ### 2.2.2 Silica Level in QURU Tree Leaves
 
 Like the ACRU plot, we move to the other tree species QURU, which stands for Red Oak. We again compare the difference between the treatment groups. This time the trend overtime and difference are not as clear as in ACRU case. There is a pike for heated group in 2010 where a possible explaination for the peak might be the extreme weather in 2010. In other years, there is no explicit difference saying that one group has highr silica level than the other. Also, we might not be able to say that there is a declining trend overtime because of the peak of heated group in 2010.
 
+
 ### 2.2.3 Summery
+
 
 By comparing the two cases above, we can clearly see that in ACRU species, heat may have positive effect on silica level while in QURU species, heat is not an effective varaible. Overall, silica level declines overtime, but there might exist exception such as heated QURU group is 2010.
 
-### Figure 2.3 & 2.4: Compare silica levels in different tree species
+## Figure 2.3 & 2.4: Compare silica levels in different tree species
+
 ```{r}
 
 ggplot(data = glbsi_avg_control) +
@@ -116,7 +126,10 @@ ggplot(data = glbsi_avg_control) +
   theme(axis.text.y = element_text(size = 14))+
   geom_line()
 ```
+
+
 ### 2.2.4 Silica Level in Control Groups
+
 
 After compare difference between treatment groups, we now compare in another set up. In this case, we change the target variable from treatment to tree species. In order to compare difference between tree species, we neet to put different species under same treatment. In contrel group, we can conclude that silica level in ACRU species is higher than in QURU since the ACRU line is way above the QRUR line. Overtime, silica level in ACRU is slightly decreasing and has some fluctuation. Silica level in QURU is relatively stable.
  
@@ -132,12 +145,16 @@ ggplot(data = glbsi_avg_heated) +
   theme(axis.text.y = element_text(size = 14))+
   geom_line()
 ```
+
+
 ### 2.2.5 Silica Level in Heated Groups
+
 
 Similar result shows in heated group: ACRU line is totally above QURU and has a decreasing trend overtime; QURU line is stable.
 
 
 ### 2.2.6 Summary
+
 
 Since under both groups, we derived same conclusion that QURU has lower silica level than ACRU. So we may conclude that tree species do affect the silica level in tree leaves. For example, ACRU is higher than QURU.
 
@@ -155,7 +172,9 @@ glbsi$Month <- as.character(glbsi$Month)
 glbsi$Date <- as.yearmon(paste0(glbsi$Year, "-0", glbsi$Month))
 glbsi$Months <- time_length(interval(as.yearmon("2002-05"),glbsi$Date), "month")
 
-r_species <- lm(log(X.wt.Bsi) ~ factor(Species) + factor(Treatment) + Months + factor(Month)+factor(Species)*Months, data = glbsi)
+r_species <- lm(log(X.wt.Bsi) ~ 
+                  factor(Species) + factor(Treatment) + Months + 
+                  factor(Month)+factor(Species)*Months, data = glbsi)
 ```
 
 ## 2.4 Discussions
@@ -170,7 +189,7 @@ Besides, p-value of F-statistic is very small, indicating that the linear regres
 
 The p-value for each independent variable tests the null hypothesis that the variable has no correlation with the dependent variable. In the regression result, p-values of most of coefficients in the model are smaller than the usual significance level of 0.05, so we should reject the null hypothesis, which means those coefficients are statistically significant and we should not remove them. 
 
-The coefficient of "factor(Species)QURU" is negative, indicating that with the same level of the other variables, the silica level in QURU tree leaves is lower than that in ACRU tree leaves. This result is consistent with the comparison between figure 1.3 and 1.4. The coefficient of "factor(Treatment)Heated" is positive, indicating that with the same level of the other variables, the silica level under heated treatment is lower than that under control treatment. This result is consistent with the comparison between figure 1.1 and 1.2. The coefficient of "Months" is negative, indicating that with the same level of the other variables, the silica level in tree leaves decreased as time went by. This result is also consistent with the overall trends in figures in part 2.2. 
+The coefficient of "factor(Species)QURU" is negative, indicating that with the same level of the other variables, the silica level in QURU tree leaves is lower than that in ACRU tree leaves. This result is consistent with the comparison between figure 2.3 and 2.4. The coefficient of "factor(Treatment)Heated" is positive, indicating that with the same level of the other variables, the silica level under heated treatment is lower than that under control treatment. This result is consistent with the comparison between figure 2.1 and 2.2. The coefficient of "Months" is negative, indicating that with the same level of the other variables, the silica level in tree leaves decreased as time went by. This result is also consistent with the overall trends in figures in part 3.2. 
 
 In order to check the fitted model, we make the marginal model plots and residual plots in the appendix, which shows the model fit the data well.
 
@@ -233,7 +252,7 @@ SH = soil_avg %>%
   filter(Treatment == "Heated")
 ```
 
-### Figure 3.1 & 3.2: Compare silica levels under different treatments
+## Figure 3.1 & 3.2: Compare silica levels under different treatments
 ```{r}
 
 ggplot(data = SM) +
@@ -247,7 +266,10 @@ ggplot(data = SM) +
   theme(axis.text.y = element_text(size = 14))+
   geom_line()
 ```
+
+
 ### 3.2.1 Silica Level in Soil Mineral Level
+
 
 We compare difference of silica level between treatment groups in soil mineral level. Heated group has higher silica level than control group, and overall they have decreaing trend overtime. In 2010, both groups have low silica level, so it might be affected by factor affecting both groups equally such as weather.
 
@@ -263,15 +285,19 @@ ggplot(data = SM2) +
   theme(axis.text.y = element_text(size = 14))+
   geom_line()
 ```
+
 ### 3.2.2 Silica Level in Soil Organic Level
 
 Now we compare silica level in soil organic level. In this case, heated group is not higher than control group all the time any more. It has drastic fluctuations. Also, control group is not decreasing along the time as well. So this case may need further analysis.
 
+
 ### 3.2.3 Summary
+
 
 In Mineral level, we may conclude that heat is affecting the silica level but in organic level we cannot make same conclusion. Also, in mineral level, we see decreasing trend while in organic level we do not.
 
-### Figure 3.3 & 3.4: Compare silica level in different soil layers
+## Figure 3.3 & 3.4: Compare silica level in different soil layers
+
 ```{r}
 
 ggplot(data = SC) +
@@ -285,6 +311,7 @@ ggplot(data = SC) +
   theme(axis.text.y = element_text(size = 14))+
   geom_line()
 ```
+
 ### 3.2.4 Silica Level in Control Group
 
 Under control treatment, organic level has silica increasing and then decreasing where in mineral level, silica is basically deceasing overtime. overall, organic has higher cilica level than mineral level does, since the organic line is above the mineral line.
@@ -302,6 +329,7 @@ ggplot(data = SH) +
   theme(axis.text.y = element_text(size = 14))+
   geom_line()
 ```
+
 ### 3.2.5 Silica Level in Heated Group
 
 Under heated treatment, mineral level still has decreasing silica level but organic level starts to fluctuate. Mostly, organic level still has relatively higher silica level except in 2005.
@@ -335,10 +363,12 @@ soil_data1$Treatment<-factor(soil_data1$Treatment)
 soil_data2<-soil_data1%>%
   mutate(season=month(Date))
 
-soil_model<-lm(Silicalevel~factor(Layer)+factor(Treatment)+deployedtime+factor(season),data = soil_data2)
+soil_model<-lm(Silicalevel~factor(Layer)+factor(Treatment)+
+                 deployedtime+factor(season),data = soil_data2)
 
 ```
-## 3.4 Discussion
+
+### 3.4 Discussion
 
 ```{r}
 summary(soil_model)
@@ -352,7 +382,7 @@ Besides, p-value of F-statistic is very small, indicating that the linear regres
 
 The p-value for each independent variable tests the null hypothesis that the variable has no correlation with the dependent variable. In the regression result, p-values of most of coefficients in the model are smaller than the usual significance level of 0.05, so we should reject the null hypothesis, which means those coefficients are statistically significant and we should not remove them. 
 
-The intercept means that when the mineral layer in May and in controlled group with 0 deployed tike, the silica level is 1.09e. The coefficient of Layer Organic is positive, so it tells us that, with other variables stay the same, the silica level in organic level is higher than mineral level. When we look at the coefficient of treatment, we can know that the the silica level in heated group is higher than controlled group with other variables staying the same. And we can justify our conclusion by figure 2.1&figure 2.2. We can find that the green line(heated) is on the top of red line(controlled). From the model, we can know that the deployed time has negative effects on the silical level with other variables staying the same, which is consistent with the figure 2.1&2.2. What's more, it seems like that silical level in May is higher than the silical level in June with other variables staying the same.
+The intercept means that when the mineral layer in May and in controlled group with 0 deployed tike, the silica level is 1.09e. The coefficient of Layer Organic is positive, so it tells us that, with other variables stay the same, the silica level in organic level is higher than mineral level. When we look at the coefficient of treatment, we can know that the the silica level in heated group is higher than controlled group with other variables staying the same. And we can justify our conclusion by figure 3.1&figure 3.2. We can find that the green line(heated) is on the top of red line(controlled). From the model, we can know that the deployed time has negative effects on the silical level with other variables staying the same, which is consistent with the figure 3.1&3.2. What's more, it seems like that silical level in May is higher than the silical level in June with other variables staying the same.
 
 In order to check the fitted model, we make the marginal model plots and residual plots in the appendix, which shows the model fit the data well.
 
@@ -412,6 +442,7 @@ ggplot(data = datalb_heated) +
     y = 'Average silica level') +
   theme_minimal()
 ```
+
 ### 4.2.1 Heated group vs Decaying Rate
 
 In this case, we can see that four different species have different silica levels: BESP > ACRU > QURU > TSCA. Also, decaying rate is denoted by point size. It is increasing as time goes. BESP and TCSA have relatively flat lines so that we do not have any decreasing or increasing trend overtime. However, ACRU and QURU have slightly upward lines, so they may have increasing trend. Most importantly, in all lines the decaying rate is incresing, but some of the lines go up, some do not chage. So we cannot conclude if there is effect to silica level by decaying rate.
@@ -434,11 +465,13 @@ ggplot(data = datalb_normal) +
   theme_minimal()
 
 ```
+
 ### 4.2.2 Controlled group vs Decaying Rate
 
 In control group, ACRU and BESP are not clearly separated any more. So we do not have clear difference among species. The other results are similar as in heated group. 
 
 ### 4.2.3 Summary
+
 By comparingh these two plots, we may conclude that decaying rate do not have severe effect on silica level. Also species do not have clear effect on silica level, at least not in ACRU and BESP.
 
 
@@ -492,10 +525,13 @@ $silical level= 2.23926+0.2361*BESP-1.57*QURU-2.09*TSCA-0.08*warming+0.00118*Tim
 
 ## Model 1
 ## Marginal Model Plots
+## Figure 2.5
 ```{r, echo = FALSE, warning = FALSE}
 marginalModelPlots(r_species)
-title(main = "Figure 2.5")
+
 ```
+
+
 
 Marginal model plots for tree species data shows the dependent variable (log(X.wt.Bsi)) on the vertical axes and the horizontal axes denotes numeric independent values (plotted points) in the fitted linear regression model. Margin model plots provide a graphical representation of model fit by showing the marginal relationships between the dependent variable and independent variables. We fitted a regression function for each of the plots using a lowess smooth function for the data (solid blue line) and for the fitted values (dashed red line). 
 
@@ -554,6 +590,7 @@ ggplot(rf_species, aes(x = .fitted, y = .resid, colour=rf_species$`factor(Month)
   theme(axis.text.y = element_text(size = 14))+
   theme_bw()
 ```
+
 ## summarise
 
 The difference between the observed value of the dependent variable and the fitted value is called the residual. A residual plot is a graph that shows the residuals on the vertical axis and the independent variable on the horizontal axis. One of assumptions for residuals in linear regression model is that the mean of residuals is zero. Therefore, if the points in a residual plot are randomly dispersed around the horizontal line at zero(the dashed black line), the linear regression model is appropriate for the data; otherwise, a non-linear model is more appropriate.
@@ -562,19 +599,24 @@ From the residual plots above, we can see that the points are dispersed randomly
 
 
 ##Model 2
+
 Then we look at the residual plot to check the fitted model
 
 ## Residual Plots
+
 ```{r, echo = FALSE}
 plot(soil_model,color=soil_model$Layer,which = 1)
 title(main = "Figure 3.5")
 ```
+
 ##summarise
 
 From the residual model, we can find that the dots are evenly distributed around both sides of x=0. And the red line is almost near the x=0 without too many fluctuations. So we can say the model fits well.
 
 ##Model 3
+
 ## residual plot
+
 ```{r, echo = FALSE}
 plot(model_litterbags,which = 1)
 title(main = "Figure 4.3")
@@ -582,6 +624,7 @@ title(main = "Figure 4.3")
 
 
 ## marginal model plots
+
 ```{r, echo = FALSE,warning = FALSE}
 
 marginalModelPlots(model_litterbags)
@@ -591,6 +634,7 @@ title(main = "Figure 4.4")
 
 
 ## summarise
+
 This model can do a great job to describe our data.
 
 Reason 1: The residual plot fits well. The dots evenly distributed, and the red line is almost the same with x=0.
