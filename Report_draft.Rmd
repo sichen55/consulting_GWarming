@@ -1,7 +1,7 @@
 ---
 title: "Warming Model-Species & Soil"
 author: "Si Chen, Jinfei Xue, Jianhao Yan"
-date: "Oct 27 2018"
+date: "Nov 20 2018"
 output:
   pdf_document: 
     latex_engine: xelatex
@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## 1.1 Overview
 
-Global warming has become a significant topic in the ecosystem field. It’s worthwhile to study in the effects which global warming has brought about. Therefore, a long-term ecosystem warming experiment was established at Harvard Forest (Petersham, MA) in 2002. In this experiment, two 30 x 30 meter plots were established in 2002. One plot is continuously heated to 5 degrees Celsius above ambient temperature, while the other plot is left as a control. A wide variety of ecological response variables have been measured over the course of the experiment. The data were collected from 2002 to 2016 in different time intervals.
+Global warming has become a significant topic in the ecosystem field. It’s worthwhile to study in the effects which global warming has brought about. Therefore, a long-term ecosystem warming experiment was established at Harvard Forest (Petersham, MA) in 2002. In this experiment, two 30 x 30 meter plots were established. One plot is continuously heated to 5 degrees Celsius above ambient temperature, while the other plot is left as a control. A wide variety of ecological response variables have been measured over the course of the experiment. The data were collected from 2002 to 2016 in different time intervals.
 
 In this study, silica (silicon dioxide; SiO2) concentration was measured in the two ecosystem pools. Measurements can be divided into two broad categories including single-time point measurements of silica pools, specifically, green leaves, leaf litter, and soil, and measurement of silica loss from decaying leaves over time, using a litterbag experiment.
 
@@ -64,9 +64,7 @@ glbsi_avg_heated = glbsi_avg %>%
 ```
 
 
-## Figure 2.1 & 2.2: Compare silica levels in leaves under different treatments
-
-
+### Figure 2.1 & 2.2: Compare silica levels in leaves under different treatments
 
 ```{r}
 ggplot(data = glbsi_avg_ACRU) +
@@ -111,7 +109,7 @@ Like the ACRU plot, we move to the other tree species QURU, which stands for Red
 
 By comparing the two cases above, we can clearly see that in ACRU species, heat may have positive effect on silica level while in QURU species, heat is not an effective varaible. Overall, silica level declines overtime, but there might exist exception such as heated QURU group is 2010.
 
-## Figure 2.3 & 2.4: Compare silica levels in different tree species
+### Figure 2.3 & 2.4: Compare silica levels in different tree species
 
 ```{r}
 
@@ -252,9 +250,9 @@ SH = soil_avg %>%
   filter(Treatment == "Heated")
 ```
 
-## Figure 3.1 & 3.2: Compare silica levels under different treatments
-```{r}
+### Figure 3.1 & 3.2: Compare silica levels under different treatments
 
+```{r}
 ggplot(data = SM) +
   aes(x = Date, y = avg, color = Treatment) +
   geom_point(size = 3) + 
@@ -296,7 +294,7 @@ Now we compare silica level in soil organic level. In this case, heated group is
 
 In Mineral level, we may conclude that heat is affecting the silica level but in organic level we cannot make same conclusion. Also, in mineral level, we see decreasing trend while in organic level we do not.
 
-## Figure 3.3 & 3.4: Compare silica level in different soil layers
+### Figure 3.3 & 3.4: Compare silica level in different soil layers
 
 ```{r}
 
@@ -317,7 +315,6 @@ ggplot(data = SC) +
 Under control treatment, organic level has silica increasing and then decreasing where in mineral level, silica is basically deceasing overtime. overall, organic has higher cilica level than mineral level does, since the organic line is above the mineral line.
 
 ```{r}
-
 ggplot(data = SH) +
   aes(x = Date, y = avg, color = Layer) +
   geom_point(size = 3) + 
@@ -426,7 +423,8 @@ datalb$Mass.Loss <- as.numeric(datalb$Mass.Loss)
 
 
 
-## Figure 4.1 & 4.2: Compare silica level and dacaying rate under different treaments
+### Figure 4.1 & 4.2: Compare silica level and dacaying rate under different treaments
+
 ```{r}
 datalb_heated<-datalb%>%
   filter(Treatment=="Warming")%>%
@@ -541,6 +539,7 @@ From the marginal model plots above, we can see the red dash line for the fitted
 
 
 ## Residual Plots
+
 ```{r, echo = FALSE}
 rf_species <- fortify(r_species)
 
