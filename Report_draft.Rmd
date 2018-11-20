@@ -525,7 +525,9 @@ $silical level= 2.23926+0.2361*BESP-1.57*QURU-2.09*TSCA-0.08*warming+0.00118*Tim
 
 ## Model 1
 ## Marginal Model Plots
-## Figure 2.5
+
+### Figure 2.5
+
 ```{r, echo = FALSE, warning = FALSE}
 marginalModelPlots(r_species)
 
@@ -604,9 +606,11 @@ Then we look at the residual plot to check the fitted model
 
 ## Residual Plots
 
+### Figure 3.5
+
 ```{r, echo = FALSE}
 plot(soil_model,color=soil_model$Layer,which = 1)
-title(main = "Figure 3.5")
+
 ```
 
 ##summarise
@@ -617,9 +621,11 @@ From the residual model, we can find that the dots are evenly distributed around
 
 ## residual plot
 
+### Figure 4.3
+
 ```{r, echo = FALSE}
 plot(model_litterbags,which = 1)
-title(main = "Figure 4.3")
+
 ```
 
 
