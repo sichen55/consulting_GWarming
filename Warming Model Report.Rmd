@@ -82,8 +82,7 @@ ggplot(data = glbsi_avg_ACRU) +
 
 ### 2.2.1 Silica Level in ACRU Tree Leaves
 
-In figure 2.1, we set Average Silica Level as response variable and compare the difference between control group and heated group in ACRU(Red Maple) tree leaves. Adding lines connecting the points, we can see more clearly that heat brings a positive effect on silica level in ACRU tree leaves since the heated group line is mostly above the control group line. This follows our expectation if we supposed to see heat having positive effects. In 2016, there is an exception that heated group has lower average silica level than control group.  There might be unexpected variables interupted the trend such as special weather. It may be explained by tracing back to data from 2016 and other related information. Overall, we can also see a decreasing trend overtime for both groups, which may be intuitive since as time goes, the concentration of silica will decrease.  
-
+In figure 2.1, avarage silica level is the reponsive variable, and we wat figure out how the tratment affects the silica level in ACRU(Red Maple). Adding lines connecting the points, we can see more clearly that heated treatment can bring a positive effect on silica level in ACRU tree leaves since the heated group line is mostly above the control group line. This follows our expectation if we supposed to see heat having positive effects. In 2016, there is an exception that heated group has lower average silica level than control group, but the overall trends of silica level that increases with the tempreture increasing is still obvious. What's more, we can also see a decreasing trend overtime for both groups
 
 ```{r}
 ggplot(data = glbsi_avg_QURU) +
@@ -101,13 +100,13 @@ ggplot(data = glbsi_avg_QURU) +
 
 ### 2.2.2 Silica Level in QURU Tree Leaves
 
-Like the ACRU plot, we move to the other tree species QURU, which stands for Red Oak. We again compare the difference between the treatment groups. This time the trend overtime and difference are not as clear as in ACRU case. There is a pike for heated group in 2010 where a possible explaination for the peak might be the extreme weather in 2010. In other years, there is no explicit difference saying that one group has highr silica level than the other. Also, we might not be able to say that there is a declining trend overtime because of the peak of heated group in 2010.
+Like the ACRU plot, we move to the other tree species QURU, which stands for Red Oak. We again compare the difference between the treatment groups. This time the trend overtime and difference are not as clear as in ACRU case. There is a pike for heated group and a low point for controlled group in 2010 where a possible explaination for the sudden change might be the extreme weather in 2010. In other years, there is no explicit difference saying that one group has highr silica level than the other. Also, we might not be able to say that there is a declining trend overtime because of the peak of heated group in 2010.
 
 
 ### 2.2.3 Summery
 
 
-By comparing the two cases above, we can clearly see that in ACRU species, heat may have positive effect on silica level while in QURU species, heat is not an effective varaible. Overall, silica level declines overtime, but there might exist exception such as heated QURU group is 2010.
+By comparing the two cases above, we can clearly see that in ACRU species, heat may have positive effect on silica level while in QURU species, heat is not a varaible with much significance. Overall, silica level declines overtime, but there might exist exception such as heated QURU group is 2010.
 
 ### Figure 2.3 & 2.4: Compare silica levels in different tree species
 
