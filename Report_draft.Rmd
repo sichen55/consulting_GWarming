@@ -160,7 +160,7 @@ Since under both groups, we derived same conclusion that QURU has lower silica l
 
 In the model, X.wt.Bsi is the dependent variable; Species, Treatment, Months and Month are selected as independent variables. Months indicates the number of months from the time when the experiment started to the time when the samples were collected. Month indicates the month when the samples were selected.
 
-In order to make the model fit the data better, we make log transformation for X.wt.Bsi. From the previous EDA, we can find out that the effect of different species on silica level depends on the value of Months. That is to say, the two variables(Species and Months) might interact with each other. Therefore, we add the interaction term for these two variables in the model.
+In order to make the model fit the data better, we make log transformation for X.wt.Bsi. From the previous EDA, we can find out that the effect of different species on silica level depends on the value of Months. That is to say, the two variables (Species and Months) interact with each other. Therefore, we add the interaction term for these two variables in the model.
 
 ```{r}
 glbsi <- read.csv("green_leaf_bsi.csv", encoding = "UTF-8")
@@ -187,7 +187,7 @@ Besides, p-value of F-statistic is very small, indicating that the linear regres
 
 The p-value for each independent variable tests the null hypothesis that the variable has no correlation with the dependent variable. In the regression result, p-values of most of coefficients in the model are smaller than the usual significance level of 0.05, so we should reject the null hypothesis, which means those coefficients are statistically significant and we should not remove them. 
 
-The coefficient of "factor(Species)QURU" is negative, indicating that with the same level of the other variables, the silica level in QURU tree leaves is lower than that in ACRU tree leaves. This result is consistent with the comparison between figure 2.3 and 2.4. The coefficient of "factor(Treatment)Heated" is positive, indicating that with the same level of the other variables, the silica level under heated treatment is lower than that under control treatment. This result is consistent with the comparison between figure 2.1 and 2.2. The coefficient of "Months" is negative, indicating that with the same level of the other variables, the silica level in tree leaves decreased as time went by. This result is also consistent with the overall trends in figures in part 3.2. 
+The coefficient of $\textbf{factor(Species)QURU}$ is negative, indicating that with the same level of the other variables, the silica level in QURU tree leaves is lower than that in ACRU tree leaves. This result is consistent with the comparison between figure 2.3 and 2.4. The coefficient of $\textbf{factor(Treatment)Heated}$ is positive, indicating that with the same level of the other variables, the silica level under heated treatment is lower than that under control treatment. This result is consistent with the comparison between figure 2.1 and 2.2. The coefficient of $\textbf{Months}$ is negative, indicating that with the same level of the other variables, the silica level in tree leaves decreased as time went by. This result is also consistent with the overall trends in figures in part 3.2. 
 
 In order to check the fitted model, we make the marginal model plots and residual plots in the appendix, which shows the model fit the data well.
 
@@ -199,17 +199,28 @@ So the linear regression model is:
 
 $log(X.wt.Bsi)=0.179747-1.292069\times QURU+0.067593 \times Heated -0.000713\times Months-0.052270 \times Month_{7}+0.243141 \times Month_{8}+0.001259 \times QURU \times Months$
 
-"QURU" equals to 1 when samples are from QURU tree leaves; "QURU" equals to 0 when samples are from ACRU tree leaves. 
+$\textbf{QURU}$ equals to 1 when samples are from QURU tree leaves; $\textbf{QURU}$ equals to 0 when samples are from ACRU tree leaves. 
 
-"Heated" equals to 1 when samples are from heated group; "Heated" equals to 0 when samples are from control group. 
+$\textbf{Heated}$ equals to 1 when samples are from heated group; $\textbf{Heated}$ equals to 0 when samples are from control group. 
 
-If samples are collected in June, then "factor(Month)7" and "factor(Month)8" are both equal to 0; If samples are collected in July, then "factor(Month)7" equal to 1 but "factor(Month)8" equals to 0; If samples are collected in August, then "factor(Month)8" equal to 1 but "factor(Month)7" equals to 0.
+If samples are collected in June, then $\textbf{$Month_{7}$}$ and $\textbf{$Month_{8}$}$ are both equal to 0; If samples are collected in July, then $\textbf{$Month_{7}$}$ equal to 1 but $\textbf{$Month_{8}$}$ equals to 0; If samples are collected in August, then $\textbf{$Month_{8}$}$ equal to 1 but $\textbf{$Month_{7}$}$ equals to 0.
 
-"$QURU\times Months$" equals to the value of "Months" when samples are from QURU tree leaves(because "QURU" equals to 1 in this case). However, "$QURU\times Months$" equals to 0 when samples are from ACRU tree leaves(because "QURU" equals to 0 in this case).
+$\textbf{$QURU\times Months$}$ equals to the value of $\textbf{Months}$ when samples are from QURU tree leaves(because $\textbf{QURU}$ equals to 1 in this case). However, $\textbf{$QURU\times Months$}$ equals to 0 when samples are from ACRU tree leaves(because $\textbf{QURU}$ equals to 0 in this case). 
+
+The interaction indicates that the effect of $\textbf{Months}$ on log $\textbf{X.wt.Bsi}$ is different for different species of trees. The coefficient on the interaction term is 0.0012587, which represents the difference in the slope of the lines predicting log $\textbf{X.wt.Bsi}$ on $\textbf{Months}$, comparing QURU and ACRU species.
+
+An equivalent way to understand the interaction term is to look at the separate linear regressions for different species:
+
+QURU tree leaves (QURU = 1) : 
+$log(X.wt.Bsi)=0.179747-1.292069\times 1+0.067593 \times Heated -0.000713\times Months-0.052270 \times Month_{7}+0.243141 \times Month_{8}+0.001259 \times 1 \times Months$
+$=-1.112322+0.067593 \times Heated +0.000546\times Months-0.052270 \times Month_{7}+0.243141 \times Month_{8}$
+
+ACRU tree leaves (QURU = 0) : 
+$log(X.wt.Bsi)=0.179747-1.292069\times 0+0.067593 \times Heated -0.000713\times Months-0.052270 \times Month_{7}+0.243141 \times Month_{8}+0.001259 \times 0 \times Months$
+$=0.179747+0.067593 \times Heated -0.000713\times Months-0.052270 \times Month_{7}+0.243141 \times Month_{8}$
 
 
-
-# 3.Model 2 : Soil Layers
+# 3. Model 2 : Soil Layers
 
 
 
@@ -391,7 +402,7 @@ round(soil_model$coefficients,digits = 6)
 
 
 The regression model is 
-$silical level=1.09+0.14 /times Layer+0.1139/times treatment-0.000040/times deployedtime-0.045594/times season$
+$silical level=1.09+0.14 \times Layer+0.1139\times treatment-0.000040\times deployedtime-0.045594\times season$
 
 
 
@@ -507,13 +518,7 @@ round(model_litterbags$coefficients,digits = 6)
 ```
 
 The model is 
-$silical level= 2.23926+0.2361*BESP-1.57*QURU-2.09*TSCA-0.08*warming+0.00118*Time.Deployed+0.0212*Mass.Lpss$
-
-
-
-
-
-
+$silical level= 2.23926+0.2361\times BESP-1.57\times QURU-2.09\times TSCA-0.08\times warming+0.00118\times Time.Deployed+0.0212\times Mass.Lpss$
 
 
 
