@@ -203,9 +203,9 @@ $\textbf{QURU}$ equals to 1 when samples are from QURU tree leaves; $\textbf{QUR
 
 $\textbf{Heated}$ equals to 1 when samples are from heated group; $\textbf{Heated}$ equals to 0 when samples are from control group. 
 
-If samples are collected in June, then $\textbf{$Month_{7}$}$ and $\textbf{$Month_{8}$}$ are both equal to 0; If samples are collected in July, then $\textbf{$Month_{7}$}$ equal to 1 but $\textbf{$Month_{8}$}$ equals to 0; If samples are collected in August, then $\textbf{$Month_{8}$}$ equal to 1 but $\textbf{$Month_{7}$}$ equals to 0.
+If samples are collected in June, then $\textbf{factor(Month)7}$ and $\textbf{factor(Month)8}$ are both equal to 0; If samples are collected in July, then $\textbf{factor(Month)7}$ equal to 1 but $\textbf{factor(Month)8}$ equals to 0; If samples are collected in August, then $\textbf{factor(Month)8}$ equal to 1 but $\textbf{factor(Month)7}$ equals to 0.
 
-$\textbf{$QURU\times Months$}$ equals to the value of $\textbf{Months}$ when samples are from QURU tree leaves(because $\textbf{QURU}$ equals to 1 in this case). However, $\textbf{$QURU\times Months$}$ equals to 0 when samples are from ACRU tree leaves(because $\textbf{QURU}$ equals to 0 in this case). 
+$\textbf{QURU*Months}$ equals to the value of $\textbf{Months}$ when samples are from QURU tree leaves(because $\textbf{QURU}$ equals to 1 in this case). However, $\textbf{QURU*Months}$ equals to 0 when samples are from ACRU tree leaves(because $\textbf{QURU}$ equals to 0 in this case). 
 
 The interaction indicates that the effect of $\textbf{Months}$ on log $\textbf{X.wt.Bsi}$ is different for different species of trees. The coefficient on the interaction term is 0.0012587, which represents the difference in the slope of the lines predicting log $\textbf{X.wt.Bsi}$ on $\textbf{Months}$, comparing QURU and ACRU species.
 
